@@ -30,3 +30,174 @@
 *.exe
 *.out
 *.app
+
+#include<iostream>
+#include <cstdlib>
+#include<stdio.h>
+using namespace std;
+
+typedef struct{
+    int Mes, Dia, Hora;
+    char Compromisso[50];
+}TipoItem;
+typedef struct TipoCelula *TipoApontador;
+typedef struct TipoCelula{
+    TipoItem Item;
+    TipoApontador Proximo;
+}TipoCelula;
+typedef struct{
+    TipoApontador Primeiro, Ultimo;
+}TipoLista;
+
+void FLVazia(TipoLista *Lista){
+    Lista->Primeiro = (TipoCelula*)new(TipoCelula);
+    Lista->Ultimo = Lista->Primeiro;
+    Lista->Primeiro->Proximo = NULL;
+}
+
+int Vazia(TipoLista Lista){
+    return(Lista.Primeiro == Lista.Ultimo);
+}
+
+void Insere(TipoItem x, TipoLista *Lista){
+    Lista->Ultimo->Proximo = (TipoCelula*)new(TipoCelula);
+    Lista->Ultimo = Lista->Ultimo->Proximo;
+    Lista->Ultimo->Item = x;
+    Lista->Ultimo->Proximo = NULL;
+}
+
+void Retira(TipoApontador p, TipoLista *Lista, TipoItem *Item)
+{
+  TipoApontador q;
+  if (Vazia(*Lista) || p == NULL || p -> Proximo == NULL)
+  { cout<< " Erro   Lista vazia ou posicao nao existe\n";
+    return;
+  }
+  q = p -> Proximo;
+  *Item = q -> Item;
+  p -> Proximo = q -> Proximo;
+  if (p -> Proximo == NULL) Lista -> Ultimo = p;
+  free(q);
+}
+void Remove(TipoLista *Lista, TipoItem item){
+    TipoApontador Aux = Lista->Primeiro->Proximo;
+    while(Aux!=NULL){
+        if(Aux->Item.Mes==item.Mes && Aux->Item.Dia==item.Dia && Aux->Item.Hora==item.Hora){
+            delete Aux;
+            Aux = Aux->Proximo;
+        }
+        Aux = Aux->Proximo;
+    }
+}
+
+int Busca(TipoLista Lista,TipoItem item){
+    TipoApontador Aux = Lista.Primeiro->Proximo;
+    while(Aux!=NULL){
+        if(Aux->Item.Mes==item.Mes && Aux->Item.Dia==item.Dia && Aux->Item.Hora==item.Hora){
+            cout << Aux->Item.Compromisso << endl;
+            return 1;
+        }
+        Aux = Aux->Proximo;
+    }
+}
+
+void Imprime(TipoLista Lista){
+    TipoApontador Aux;
+    Aux = Lista.Primeiro->Proximo;
+    while(Aux != NULL){
+        cout << Aux -> Item.Dia <<"/"<< Aux->Item.Mes <<" as "<< Aux->Item.Hora<<"horas"<<endl;
+        cout << Aux-> Item.Compromisso << "\n\n";
+        Aux = Aux->Proximo;
+    }
+}
+
+TipoItem Elementos(){
+    TipoItem item;
+    cout << "Mes: ";
+    cin >> item.Mes;
+    cout << "Dia: ";
+    cin >> item.Dia;
+    cout << "Hora: ";
+    cin >> item.Hora;
+    cout << "Compromisso: ";
+    gets(item.Compromisso);
+    gets(item.Compromisso);
+    return item;
+}
+
+int Menu(){
+    int Opcao;
+    cout << "Escolha uma opcao: " << endl;
+    cout << "1 - Abrir a Agenda " << endl;
+    cout << "2 - Inserir Compromisso " << endl;
+    cout << "3 - Remover Compromisso " << endl;
+    cout << "4 - Listar Compromissos " << endl;
+    cout << "5 - Verificar Compromisso " << endl;
+    cout << "6 - Fechar Agenda " << endl;
+    cout << "\nOpcao: ";
+    cin >> Opcao;
+    return Opcao;
+}
+
+int main(){
+    TipoLista lista;
+    TipoItem item;
+    TipoApontador p;
+    int opc;
+
+    do{
+    system("cls");
+    opc = Menu();
+    switch(opc){
+    case 1:
+        FLVazia(&lista);
+        cout << "Agenda aberta\n\n";
+        system("pause");
+        system("cls");
+        break;
+    case 2:
+        system("cls");
+        item = Elementos();
+        Insere(item, &lista);
+        break;
+    case 3:
+       system("cls");
+        TipoItem t;
+        cout << "Mes: ";
+        cin >> t.Mes;
+        cout << "Dia: ";
+        cin >> t.Dia;
+        cout << "Hora: ";
+        cin >> t.Hora;
+        system("cls");
+        Remove(&lista, t);
+        break;
+    case 4:
+        system("cls");
+        Imprime(lista);
+        system("pause");
+        break;
+    case 5:
+        system("cls");
+        TipoItem a;
+        cout << "Mes: ";
+        cin >> a.Mes;
+        cout << "Dia: ";
+        cin >> a.Dia;
+        cout << "Hora: ";
+        cin >> a.Hora;
+        system("cls");
+        if(Busca(lista,a)== 1){
+            cout << "Compromisso marcado" << endl;
+
+            system("pause");
+        }else{
+            cout << "Compromisso nao existente" << endl;
+            system("pause");
+        }break;
+    }
+    }while(opc!=6);
+
+
+    return 0;
+}
